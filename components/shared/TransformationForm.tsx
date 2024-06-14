@@ -75,7 +75,7 @@ const onSelectFieldHandler (value: string, onChangeField: (value:string) =>void)
             render={({ field }) => <Input {...field}
             className="input-field" />}
           />
-{type === 'fill' && (
+            {type === 'fill' && (
           <CustomField
             control={form.control}
             name="aspectRatio"
@@ -100,7 +100,11 @@ const onSelectFieldHandler (value: string, onChangeField: (value:string) =>void)
             )}  
           />
         )}
-
+{(type === 'remove') || (type === 'recolor')} && (
+  <div className="promt-field">
+     
+  </div>
+)
       </form>
     </Form>
   )
