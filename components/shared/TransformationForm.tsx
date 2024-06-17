@@ -60,9 +60,34 @@ const TransformationForm = ({action, data = null, userId, type, creditBalance}: 
     console.log(values)
   }
 
-const onSelectFieldHandler (value: string, onChangeField: (value:string) =>void) =>{
+  const onSelectFieldHandler = (value: string, onChangeField: (value: string) => void) => {
+    const imageSize = aspectRatioOptions[value as AspectRatioKey]
 
-}: defaultValues
+    setImage((prevState: any) => ({
+      ...prevState,
+      aspectRatio: imageSize.aspectRatio,
+      width: imageSize.width,
+      height: imageSize.height,
+    }))
+
+    setNewTransformation(transformationType.config);
+
+    return onChangeField(value)
+  }
+
+const onInputChangeHandler = (fieldName: string, value: string, type: string, onChangeField: (value: string) => void) => {
+  debounce(() => {
+    setNewTransformation((prevState: any) => ({
+      ...prevState,
+      [type]: {
+        ...prevState?.[type],
+        [fieldName === 'prompt' ? 'prompt' : 'to' ]: value 
+      }
+    }))
+  }, 1000)();
+    
+  return onChangeField(value)
+}
 
   return (
     <Form {...form}>
@@ -102,7 +127,46 @@ const onSelectFieldHandler (value: string, onChangeField: (value:string) =>void)
         )}
 {(type === 'remove') || (type === 'recolor')} && (
   <div className="promt-field">
-     
+  <CustomField 
+              control={form.control}
+              name="prompt"
+              formLabel={
+                type === 'remove' ? 'Object to remove' : 'Object to recolor'
+              }
+              className="w-full"
+              render={({ field }) => (
+                <Input 
+                  value={field.value}
+                  className="input-field"
+                  onChange={(e) => onInputChangeHandler(
+                    'prompt',
+                    e.target.value,
+                    type,
+                    field.onChange
+                  )}
+                />
+              )}
+            />
+            {type === 'recolor' && (
+              <CustomField 
+                control={form.control}
+                name="color"
+                formLabel="Replacement Color"
+                className="w-full"
+                render={({ field }) => (
+                  <Input 
+                    value={field.value}
+                    className="input-field"
+                    onChange={(e) => onInputChangeHandler(
+                      'color',
+                      e.target.value,
+                      'recolor',
+                      field.onChange
+                    )}
+                  />
+                )}
+              />
+            )}
   </div>
 )
       </form>
