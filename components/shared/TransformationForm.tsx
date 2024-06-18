@@ -36,10 +36,15 @@ export const formSchema = z.object({
   publicId: z.string(),
 })
 
-const TransformationForm = ({action, data = null, userId, type, creditBalance}: TransformationFormProps) => {
+const TransformationForm = ({action, data = null, userId, type, creditBalance, config = null}: TransformationFormProps) => {
  const transformationType = transformationTypes[type]
  const [image, setImage] = useState(data)
  const [newTransformation, setTransformation] = useState<Transformations | null >(null)
+ const [isSubmitting, setIsSubmitting] = useState(false);
+ const [isTransforming, setIsTransforming] = useState(false);
+ const [transformationConfig, setTransformationConfig] = useState(config);
+
+
   
  const initialValues = data && action === 'Update' ? {
     title: data.title,
@@ -88,6 +93,8 @@ const onInputChangeHandler = (fieldName: string, value: string, type: string, on
     
   return onChangeField(value)
 }
+
+const onTransformHandler = () => {}
 
   return (
     <Form {...form}>
@@ -169,6 +176,11 @@ const onInputChangeHandler = (fieldName: string, value: string, type: string, on
             )}
   </div>
 )
+<div className="flex flex-col gap-4">
+<Button type="button" className="submit-button capitalize" disabled={isTransforming || newTransformation === null} onClick={onTransformHandler}>{isTransforming ? "Transforming..." : "Apply transformation"}</Button>
+
+<Button type="submit" className="submit-button capitalize" disabled={isSubmitting}>{isSubmitting ? "Submitting..." : "Save Image"}</Button>
+</div>
       </form>
     </Form>
   )
