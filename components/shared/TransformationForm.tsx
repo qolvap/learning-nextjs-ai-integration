@@ -80,6 +80,7 @@ const TransformationForm = ({action, data = null, userId, type, creditBalance, c
     return onChangeField(value)
   }
 
+
 const onInputChangeHandler = (fieldName: string, value: string, type: string, onChangeField: (value: string) => void) => {
   debounce(() => {
     setNewTransformation((prevState: any) => ({
@@ -94,7 +95,25 @@ const onInputChangeHandler = (fieldName: string, value: string, type: string, on
   return onChangeField(value)
 }
 
-const onTransformHandler = () => {}
+const onTransformHandler = async () => {
+  setIsTransforming(true)
+
+  setTransformationConfig(
+    deepMergeObjects(newTransformation, transformationConfig)
+  )
+
+  setNewTransformation(null)
+
+  startTransition(async () => {
+    await updateCredits(userId, creditFee)
+  })
+}
+
+useEffect(() => {
+  if(image && (type === 'restore' || type === 'removeBackground')) {
+    setNewTransformation(transformationType.config)
+  }
+}, [image, transformationType.config, type])
 
   return (
     <Form {...form}>
