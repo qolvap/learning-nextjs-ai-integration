@@ -23,10 +23,11 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import { aspectRatioOptions, defaultValues, transformationTypes } from "@/constants"
+import { aspectRatioOptions, creditFee, defaultValues, transformationTypes } from "@/constants"
 import { CustomField } from "./CustomField"
-import { useState } from "react"
-import { AspectRatioKey } from "@/lib/utils"
+import { startTransition, useEffect, useState } from "react"
+import { AspectRatioKey, debounce, deepMergeObjects } from "@/lib/utils"
+import { updateCredits } from "@/lib/actions/user.action"
 
 export const formSchema = z.object({
   title: z.string(),
@@ -39,7 +40,7 @@ export const formSchema = z.object({
 const TransformationForm = ({action, data = null, userId, type, creditBalance, config = null}: TransformationFormProps) => {
  const transformationType = transformationTypes[type]
  const [image, setImage] = useState(data)
- const [newTransformation, setTransformation] = useState<Transformations | null >(null)
+ const [newTransformation, setNewTransformation] = useState<Transformations | null >(null)
  const [isSubmitting, setIsSubmitting] = useState(false);
  const [isTransforming, setIsTransforming] = useState(false);
  const [transformationConfig, setTransformationConfig] = useState(config);
