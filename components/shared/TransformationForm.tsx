@@ -25,9 +25,10 @@ import {
 import { Input } from "@/components/ui/input"
 import { aspectRatioOptions, creditFee, defaultValues, transformationTypes } from "@/constants"
 import { CustomField } from "./CustomField"
-import { startTransition, useEffect, useState } from "react"
+import { startTransition, useEffect, useState, useTransition } from "react"
 import { AspectRatioKey, debounce, deepMergeObjects } from "@/lib/utils"
 import { updateCredits } from "@/lib/actions/user.action"
+import { useRouter } from "next/router"
 
 export const formSchema = z.object({
   title: z.string(),
@@ -44,8 +45,8 @@ const TransformationForm = ({action, data = null, userId, type, creditBalance, c
  const [isSubmitting, setIsSubmitting] = useState(false);
  const [isTransforming, setIsTransforming] = useState(false);
  const [transformationConfig, setTransformationConfig] = useState(config);
-
-
+ const [isPending, startTransition] = useTransition();
+ const router = useRouter()
   
  const initialValues = data && action === 'Update' ? {
     title: data.title,
@@ -60,10 +61,70 @@ const TransformationForm = ({action, data = null, userId, type, creditBalance, c
     defaultValues: initialValues,
   })
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true);
+
+    if(data || image) {
+      const transformationUrl = getCldImageUrl({
+        width: image?.width,
+        height: image?.height,
+        src: image?.publicId,
+        ...transformationConfig
+      })
+
+      const imageData = {
+        title: values.title,
+        publicId: image?.publicId,
+        transformationType: type,
+        width: image?.width,
+        height: image?.height,
+        config: transformationConfig,
+        secureURL: image?.secureURL,
+        transformationURL: transformationUrl,
+        aspectRatio: values.aspectRatio,
+        prompt: values.prompt,
+        color: values.color,
+      }
+
+      if(action === 'Add') {
+        try {
+          const newImage = await addImage({
+            image: imageData,
+            userId,
+            path: '/'
+          })
+
+          if(newImage) {
+            form.reset()
+            setImage(data)
+            router.push(`/transformations/${newImage._id}`)
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      if(action === 'Update') {
+        try {
+          const updatedImage = await updatedImage({
+            image: {
+              ...imageData,
+              _id: data._id
+            },
+            userId,
+            path: `/transformations/${data._id}`
+          })
+
+          if(updatedImage) {
+            router.push(`/transformations/${updatedImage._id}`)
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+
+    setIsSubmitting(false)
   }
 
   const onSelectFieldHandler = (value: string, onChangeField: (value: string) => void) => {
@@ -207,3 +268,11 @@ useEffect(() => {
 }
 
 export default TransformationForm
+function getCldImageUrl(arg0: { restore?: boolean | undefined; fillBackground?: boolean | undefined; remove?: { prompt: string; removeShadow?: boolean | undefined; multiple?: boolean | undefined } | undefined; recolor?: { prompt?: string | undefined; to: string; multiple?: boolean | undefined } | undefined; removeBackground?: boolean | undefined; width: any; height: any; src: any }) {
+  throw new Error("Function not implemented.")
+}
+
+function addImage(arg0: { image: { title: string; publicId: any; transformationType: TransformationTypeKey; width: any; height: any; config: Transformations | null; secureURL: any; transformationURL: void; aspectRatio: string | undefined; prompt: string | undefined; color: string | undefined }; userId: string; path: string }) {
+  throw new Error("Function not implemented.")
+}
+
