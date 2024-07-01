@@ -5,8 +5,14 @@ import { CldUploadWidget } from 'next-cloudinary';
 const MediaUploader = () => {
     const {toast} = useToast()
     const onUploadSuccessHandler = (result: any) =>{
-
+      toast({
+        title: 'Image uploaded successfully',
+        description: '1 credit was deducted from Your account',
+        duration: 5000,
+        className: 'success-toast' 
+      })
     }
+    
     const onUploadErrorHandler = () => {
       toast({
         title: 'Something went wrong while uploading',
