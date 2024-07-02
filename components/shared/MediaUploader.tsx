@@ -1,8 +1,13 @@
 import React from 'react'
 import { useToast } from "@/components/ui/use-toast"
 import { CldUploadWidget } from 'next-cloudinary';
-
-const MediaUploader = () => {
+type MediaUploaderProps = {
+  onValueChange: (value: string) => void;
+  setImage: React.Dispatch<any>;
+  image:any;
+  type: string;
+ }
+const MediaUploader = ({onValueChange, setImage,image,publicId,type}: MediaUploaderProps) => {
     const {toast} = useToast()
     const onUploadSuccessHandler = (result: any) =>{
       toast({
@@ -32,7 +37,22 @@ options={{
 onSuccess={onUploadSuccessHandler}
 onError={onUploadErrorHandler}
 >
-
+{({open}) => (
+  <div className='flex flex-col gap-4'>
+    <h3 className='h3-bold text-dark-600'>
+      Original
+    </h3>
+    {publicId ? (
+    <>
+    Here is image
+    </>
+    ): (
+      <div>
+        Here is no image
+        </div>
+    )}
+  </div>
+)}
 </CldUploadWidget>
     </div>
   )
