@@ -1,7 +1,9 @@
 import React from 'react'
 import { useToast } from "@/components/ui/use-toast"
-import { CldUploadWidget } from 'next-cloudinary';
+import { CldImage, CldUploadWidget } from 'next-cloudinary';
 import Image from 'next/image';
+import { dataUrl, getImageSize } from '@/lib/utils';
+import { PlaceholderValue } from 'next/dist/shared/lib/get-img-props';
 type MediaUploaderProps = {
   onValueChange: (value: string) => void;
   setImage: React.Dispatch<any>;
@@ -11,6 +13,14 @@ type MediaUploaderProps = {
 const MediaUploader = ({onValueChange, setImage,image,publicId,type}: MediaUploaderProps) => {
     const {toast} = useToast()
     const onUploadSuccessHandler = (result: any) =>{
+      setImage((prevState: any) => ({
+        ...prevState,
+        publicId: result?.info?.public_id,
+        width: result?.info?.width,
+        height: result?.info?.height,
+        secureUrl: result?.info?.secureUrl,
+      }))
+      onValueChange(result?.info?.public_id)
       toast({
         title: 'Image uploaded successfully',
         description: '1 credit was deducted from Your account',
@@ -30,7 +40,8 @@ const MediaUploader = ({onValueChange, setImage,image,publicId,type}: MediaUploa
   return (
     <div>
 
-<CldUploadWidget uploadPreset="jsm_imaginify"
+<CldUploadWidget 
+uploadPreset="jsm_imaginify"
 options={{
   multiple: false,
   resourceType: "image",
@@ -45,8 +56,17 @@ onError={onUploadErrorHandler}
     </h3>
     {publicId ? (
     <>
-    Here is image
-    </>
+    <div className="cursor-pointer overflow-hidden rounded-[10px]">
+      <CldImage 
+      width={getImageSize(type,image, "width")}
+      height={getImageSize(type,image, "height")}
+      src={publicId}
+      alt="image"
+      sizes={"(max-width: 767px) 100vw, 50vw"}
+      placeholder={dataUrl as PlaceholderValue}
+      className='media-uploader_cldImage'
+      />
+    </div>
     ): (
       <div className='media-uploader_cta' onClick={()=> open()}>
         <div className='media-uploader_cta-image'>
