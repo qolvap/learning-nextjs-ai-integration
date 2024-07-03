@@ -1,6 +1,7 @@
 import React from 'react'
 import { useToast } from "@/components/ui/use-toast"
 import { CldUploadWidget } from 'next-cloudinary';
+import Image from 'next/image';
 type MediaUploaderProps = {
   onValueChange: (value: string) => void;
   setImage: React.Dispatch<any>;
@@ -47,8 +48,14 @@ onError={onUploadErrorHandler}
     Here is image
     </>
     ): (
-      <div>
-        Here is no image
+      <div className='media-uploader_cta' onClick={()=> open()}>
+        <div className='media-uploader_cta-image'>
+          <Image src="/assets/icons/add.svg"
+          alt="Add Image"
+          width={24}
+          height={24}/>
+        </div>
+        <p className="p-14-medium">Click here to upload the image</p>
         </div>
     )}
   </div>
