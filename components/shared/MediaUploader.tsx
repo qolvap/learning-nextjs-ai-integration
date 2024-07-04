@@ -1,3 +1,5 @@
+"use client"
+
 import React from 'react'
 import { useToast } from "@/components/ui/use-toast"
 import { CldImage, CldUploadWidget } from 'next-cloudinary';
