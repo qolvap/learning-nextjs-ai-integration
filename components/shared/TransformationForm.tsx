@@ -30,6 +30,7 @@ import { AspectRatioKey, debounce, deepMergeObjects } from "@/lib/utils"
 import { updateCredits } from "@/lib/actions/user.action"
 import { useRouter } from "next/router"
 import MediaUploader from "./MediaUploader"
+import TransformedImage from "./TransformedImage"
 
 export const formSchema = z.object({
   title: z.string(),
@@ -273,6 +274,7 @@ useEffect(() => {
               />
             )}
           />
+          <TransformedImage></Transformed>
                </div>
 <div className="flex flex-col gap-4">
 <Button type="button" className="submit-button capitalize" disabled={isTransforming || newTransformation === null} onClick={onTransformHandler}>{isTransforming ? "Transforming..." : "Apply transformation"}</Button>
