@@ -274,7 +274,12 @@ useEffect(() => {
               />
             )}
           />
-          <TransformedImage></Transformed>
+          <TransformedImage
+          image={image}
+          type={type}
+          title={form.getValues().title}
+          />
+
                </div>
 <div className="flex flex-col gap-4">
 <Button type="button" className="submit-button capitalize" disabled={isTransforming || newTransformation === null} onClick={onTransformHandler}>{isTransforming ? "Transforming..." : "Apply transformation"}</Button>
